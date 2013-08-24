@@ -1,0 +1,546 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	<title>360&deg; Engage by Incendant</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
+	<link rel="stylesheet" href="themes/pmc.min.css" />
+	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="http://incendant.com/jwplayer/jwplayer.js" id="jwplayer_script"></script>
+    <script type="text/javascript">jwplayer.key="qRu5Fl/V8xAT8KDeQ2YTL+d/sUcZlaxBzGUJNiAxc40=";</script>
+    <script src="http://portal.incendant.com/HealthLibrary/resources/js/incendantUtils.js"></script>
+	<link rel="stylesheet" href="css/incendant.css" />
+    <script type="text/javascript">
+    
+    var videos = {};
+    var videosById = [];
+    var videosByShortcode = [];
+    var videoCategoriesById = [];
+    var images = {};
+    var imagesById = [];
+    var imageCategoriesById = [];
+    var featured = {};
+    
+    //These variables are for the image filters
+    var showNormal = true;
+    var showPathology = true;
+    var showRadiology = true;
+	    
+    $(document).bind("mobileinit", function(){
+        //alert("mobile init Page Initialized");
+        $.extend(  $.mobile , {
+            defaultPageTransition: 'slide',
+        });
+       // $.mobile.listview.prototype.options.filterCallback = searchFilter2;
+    });
+ 	$(document).bind('pageinit', function (event) {
+ 		console.log(event);
+        if (event.target.id == 'search') {
+        	$("#search-listview").listview('option', 'filterCallback', searchFilter);
+			
+        }
+    });   
+    $(document).ready(function(){
+        //alert("Ready Page Initialized");
+    	setupIncendantLid();
+        loadFeatured();
+        loadVideos();
+        loadImages();
+        populateSearch();
+        //set the header
+        $("div[data-role=header] h1").html(getIncendantTitleString());
+        
+        $( ".incendant_tile", '#videos' ).click(function(evt) {
+        	//console.log("Show Video category "+evt.currentTarget.title+"("+evt.currentTarget.catid+")");
+        	var catid = evt.currentTarget.getAttribute("catid");
+        	//console.log("Show Video category ", evt.currentTarget);
+        	populateVideoList(videoCategoriesById[catid]);
+        	$.mobile.changePage("#video-list");
+        	$( ".incendant_list", '#video-list' ).click(function(evt) {
+	        	//console.log("Show Video ",evt.currentTarget);
+	        	var catid = evt.currentTarget.getAttribute("vidid");
+	        	showVideo(videosById[catid]);
+	        	$.mobile.changePage("#video-view");
+			});
+		});
+        $( ".incendant_tile", '#images' ).click(function(evt) {
+        	//console.log("Show Image category ",evt.currentTarget);
+        	var catid = evt.currentTarget.getAttribute("catid");
+        	populateImageList(imageCategoriesById[catid]);
+        	$.mobile.changePage("#image-list");
+        	$( ".incendant_tile", '#image-list' ).click(function(evt) {
+	        	//console.log("Show Image ",evt.currentTarget);
+	        	var catid = evt.currentTarget.getAttribute("imageid");
+	        	showImage(imagesById[catid]);
+	        	$.mobile.changePage("#image-view");
+			});
+		});
+		$( ".image-toggle" ).change(function(evt) {
+			console.log(evt);
+			var val = 'normal';
+			switch (evt.target.id) {
+				case 'flip-normal':
+				val = 'Normal';
+				showNormal = evt.target.value=="on";
+				break;
+				case 'flip-pathology':
+				val = 'Pathology';
+				showPathology = evt.target.value=="on";
+				break;
+				case 'flip-radiology':
+				val = 'Radiology';
+				showRadiology = evt.target.value=="on";
+				break;
+			}
+			if (evt.target.value=="off") {
+				//hide images
+				$( ".incendant_tile[type='"+val+"']", '#image-list' ).hide();
+			} else {
+				//show images
+				$( ".incendant_tile[type='"+val+"']", '#image-list' ).show();
+			}
+		});
+	});
+    function loadFeatured() {
+    	//Get the Videos as JSON
+	    var oReq = new XMLHttpRequest();
+	    oReq.open("get", "featured.json", false);
+		oReq.send();
+	
+		if (oReq.status === 200 && oReq.responseText) {
+	    	//Success
+	    	featured = JSON.parse(oReq.responseText);
+	    } else {
+	        //could not register visit
+	        console.log("Could not retrieve featured content from the server!");
+	    }
+		var featuredDiv = $('#featured div[data-role=content]').append($(document.createElement('div')).addClass("featured"));
+    	
+	    for (var index in featured) {
+	    	var topic = featured[index];
+	    	
+	    	if (topic.type == 'header') {
+	    		featuredDiv.append('<div class="incendant_featured_header_outer">'+
+	    							'<div class="incendant_featured_header">'+
+	    								'<img src="'+topic.image+'"></img>'+
+	    								'<h1>'+topic.title+'</h1>'+
+	    								'<p>'+topic.summary+'</p>'+
+	    							'</div>'+
+	    						'</div>'
+	    		);
+		    } else {
+		    	var sc = topic.topic.shortcode;
+		    	featuredDiv.append('<div class="incendant_featured_outer">'+
+	    							'<div class="incendant_featured">'+
+	    								'<img src="'+topic.image+'"></img>'+
+	    								'<h1>'+topic.title+'</h1>'+
+	    								'<p>'+topic.summary+'</p>'+
+	    								'<div class="watch_featured_video" data-role="button" vidid="'+topic.topic.id+'">Watch Video</div>'+
+	    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" data-role="button" target="_blank"">Download PDF</a>'+
+	    							'</div>'+
+	    						'</div>'
+	    		);
+		    }
+	    	
+	    }
+	    $( ".watch_featured_video", '#featured' ).click(function(evt) {
+        	console.log("Show Featured Video ",evt.currentTarget);
+        	var catid = evt.currentTarget.getAttribute("vidid");
+        	showVideo(videosById[catid]);
+        	$.mobile.changePage("#video-view");
+		});
+
+    }
+    function populateSearch() {
+    	var searchList = $('#search-listview');
+    	
+	    for (var index in videosById) {
+	    	var topic = videosById[index];
+	    	
+	    	searchList.append('<li vidid='+topic.id+'>'+
+    								'<img src="'+topic.new_thumb+'"></img>'+
+    								'<h1>'+topic.title+'</h1>'+
+    						   '</li>'
+    		);
+			
+	    }
+	    
+	    $( '#search-listview' ).click(function(evt) {
+        	console.log("Show Search Video ",evt.currentTarget);
+        	var catid = evt.currentTarget.getAttribute("vidid");
+        	showVideo(videosById[catid]);
+        	$.mobile.changePage("#video-view");
+		});
+
+    }
+	function searchFilter( text, searchValue , node) {
+		console.log("In searchFilter()",arguments);
+		var vidid = node.attr('vidid');
+		text += " "+videosById[vidid].metakey;
+		return text.toLowerCase().indexOf( searchValue ) === -1;
+	}
+
+    function loadVideos() {
+    	videos = getVideos();
+
+    	//sort the categories
+    	videos = videos.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
+
+    	var videoCats = $('#videos div[data-role=content]').append($(document.createElement('div')).attr("catid","video-cats"));
+    	for (var index in videos) {
+    		var cat = videos[index];
+    		videoCategoriesById[cat.id] = cat;
+    		//console.log(cat);
+    		var tile = $(document.createElement('div')).addClass("incendant_tile");
+    		tile.attr("catid",cat.id);
+    		tile.html("<img src='"+cat.thumb_url+"' alt='"+cat.title+"'></img>");
+    		videoCats.append(tile);
+    		
+    		//loop through the videos and add them to the global lookup
+    		for (var j in cat.topics) {
+    			var vid = cat.topics[j];
+    			//remove (ER) from titles
+	    		vid.title = vid.title.replace(/ \(ER\)/g,"");
+	    		console.log(vid.title);
+	    		videosById[vid.id] = vid;
+    			videosByShortcode[vid.shortcode] = vid;
+    		}
+    		
+    		//sort the videos
+    		cat.topics = cat.topics.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
+    	}
+    }
+    function loadImages() {
+    	images = getImages();
+
+    	//sort the categories
+    	images = images.sort(function (a,b) {return a.name < b.name ? -1 : a.name > b.name;});
+    	//console.log(images);
+
+    	var imageCats = $('#images div[data-role=content]').append($(document.createElement('div')).attr("catid","image-cats"));
+    	for (var index in images) {
+    		var cat = images[index];
+    		imageCategoriesById[cat.id] = cat;
+    		//console.log(cat);
+    		var tile = $(document.createElement('div')).addClass("incendant_tile");
+    		tile.attr("catid",cat.id);
+    		tile.html("<img src='"+cat.thumb+"' alt='"+cat.title+"'></img>");
+    		imageCats.append(tile);
+    		
+    		//loop through the images and add them to the global lookup
+    		for (var j in cat.images) {
+    			var image = cat.images[j];
+    			imagesById[image.id] = image;
+    		}
+    	}
+    }
+    function populateVideoList(cat) {
+    	//console.log(cat);
+    	var videoList = $('#video-list div[data-role=content]').empty();
+    	
+    	for (var index in cat.topics) {
+    		var video = cat.topics[index];
+    		var tile = $(document.createElement('div')).addClass("incendant_list").attr("vidid",video.id);
+    		tile.html("<img src='"+video.new_thumb+"' alt='"+video.title+"'></img><span>"+video.title+"</span>");  
+    		videoList.append(tile);  		
+    	}
+    }
+    function populateImageList(cat) {
+    	//console.log(cat);
+    	var imageList = $('#image-list div[data-role=content]');
+    	imageList.empty();
+    	for (var index in cat.images) {
+    		var image = cat.images[index];
+    		//console.log(image);
+    		var tile = $(document.createElement('div')).addClass("incendant_tile").attr("imageid",image.id).attr("type",image.type);
+    		if (image.type=="Normal" && !showNormal ||
+    			image.type=="Pathology" && !showPathology ||
+    			image.type=="Radiology" && !showRadiology) {
+    			tile.hide();
+    		}
+    		tile.html("<img src='"+image.thumb+"' alt='"+image.name+"'></img>");  
+    		imageList.append(tile);  		
+    	}
+    }
+    function showImage(image) {
+    	//console.log(cat);
+    	var imageView = $('#image-view div[data-role=content]').empty();
+    	//console.log(imageView[0].getBoundingClientRect());
+    	imageView.html("<img width='100%' src='"+image.source+"' alt='"+image.name+"'></img>");	
+    }
+    function showVideo(video) {
+    	//console.log(cat);
+    	var imageView = $('#video-view div[data-role=content]').empty();
+    	//console.log(imageView[0].getBoundingClientRect());
+    	setupJWPlayer(imageView,video);
+    	
+    }
+    
+    
+    function setupJWPlayer(imageViewDiv, video) {
+    	//console.log(video);
+        var shortcode = video.shortcode;
+        var enSub = 'http://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_en.srt';
+        var esSub = 'http://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_es.srt';
+        var divid = 'demovideo';
+        //var divid = 'demovideo_'+Math.random;
+        imageViewDiv.html('<div id="'+divid+'">Loading the player ...</div>');
+        var image_file_url = video.thumb;
+        var videoLink = video.video;
+        
+        var signedUrl = video.file;
+        var streamer = 'rtmp://'+video.streamer;
+
+        //console.log("signedUrl variable:"+signedUrl);
+        //console.log("videoLink variable:"+videoLink);
+          // console.log("Loading video for "+shortcode);
+//        var width = imageViewDiv.offset().width;
+//        var height = imageViewDiv.offset().height;
+        var width = $(window).width()-30;
+        var height = $(window).height()-72; //header + margins
+
+           //Do we need to handle shortened videos?
+        if (useBriefVideo && typeof video.brief !== 'undefined') {
+           signedUrl = video.brief;
+           videoLink = "http://s3.amazonaws.com/incendant/short/"+shortcode+"_C.mp4";
+           jwplayer(divid).setup({
+                width: width,
+                height: height,
+                image: image_file_url,
+                autostart : 'true',
+                primary: 'flash',
+                sources: [{
+                          file: streamer+"mp4:"+signedUrl
+                          },{
+                    file: videoLink
+                }]
+            });
+       } else {
+ 
+        jwplayer(divid).setup({
+            width: width,
+            height: height,
+            image: image_file_url,
+            autostart : 'true',
+            primary: 'flash',
+            tracks: [{ 
+                file: enSub, 
+                label: "English",
+                kind: "captions"
+            },{ 
+                file: esSub, 
+                kind: "captions",
+                label: "Spanish"
+            }],
+            sources: [{ 
+                file: streamer+"mp4:"+signedUrl
+            },{
+                file: videoLink
+            }]
+        });
+        }
+
+        this.onJWPlayerReady();
+        jwplayer(divid).onError(onVideoError);
+        jwplayer(divid).onComplete(onVideoComplete);
+
+    }
+           
+    function onVideoError(message) {
+           //Error!
+           console.log(message);
+    }
+
+    function onVideoComplete() {
+        //Record the visit!
+
+        //Prompt the User to get the Name and Password
+        /*Ext.Msg.prompt("Followup?", 
+        "If you would like a followup email message with a link to review this video from your smartphone or home computer pleases provide your email address.",
+        function(btn,text) {
+            //register visit
+            //add this video
+            //send followup email
+            if (text && text.length > 0) {
+                updatePatientInfo(text);
+            }
+        });*/
+    }
+
+    function onJWPlayerReady() {
+        //addIncendantVideoVisit(this.config.topic.id);
+    }
+
+    
+    
+    
+    </script>
+
+	<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
+</head> 
+<body> 
+
+<div data-role="page" id="featured">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#featured" data-iconpos="top" data-icon="home" class="ui-btn-active ui-state-persist">Featured</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
+		<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="images">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="camera" class="ui-btn-active ui-state-persist">Images</a></li>
+		<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="videos">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
+		<li><a href="#videos" data-iconpos="top" data-icon="film" class="ui-btn-active ui-state-persist">Videos</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="search">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<ul id="search-listview" data-role="listview" data-filter="true">
+		</ul>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed" data-id="incendant">
+	  <div data-role="navbar">
+		<ul>
+			<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
+			<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
+			<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
+			<li><a href="#search" data-iconpos="top" data-icon="search" class="ui-btn-active ui-state-persist">Search</a></li>
+		</ul>
+	  </div><!-- /navbar -->
+	</div>
+</div><!-- /page -->
+
+
+<div data-role="page" id="video-list" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="image-list" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+	<div data-role="controlgroup" data-type="horizontal">
+		<div class="image-toggle-div">
+			<label for="flip-normal">Normal:</label>
+			<select class="image-toggle" name="flip-normal" id="flip-normal" data-role="slider">
+				<option value="on">Hide</option>
+				<option value="off">Show</option>
+			</select>
+		</div>
+		<div class="image-toggle-div">
+			<label for="flip-pathology">Pathology:</label>
+			<select class="image-toggle" name="flip-pathology" id="flip-pathology" data-role="slider">
+				<option value="on">Hide</option>
+				<option value="off">Show</option>
+			</select>
+		</div>
+		<div class="image-toggle-div">
+			<label for="flip-radiology">Radiology:</label>
+			<select class="image-toggle" name="flip-radiology" id="flip-radiology" data-role="slider">
+				<option value="on">Hide</option>
+				<option value="off">Show</option>
+			</select>
+		</div>
+	</div>
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="image-view" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="video-view" data-add-back-btn="true">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+</div>
+</div><!-- /page -->
+
+</body>
+</html>

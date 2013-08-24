@@ -1,0 +1,90 @@
+ <html>
+    <head>
+        <title>Incendant Web Widget Configurator</title>
+        <script type="text/javascript">
+            var baseCode='<a class=\"incendant-widget\" href=\"http://portal.incendant.com/HealthLibrary/\" width=\"WIDTH\" height=\"HEIGHT\" scheme=\"SCHEME\" brief=\"BRIEF\" redirect=\"REDIRECT\">Incendant Health Library</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://portal.incendant.com/HealthLibrary/widget.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"incendant-widget\");</scr'+'ipt>';
+            
+            function updateCode(width,height,scheme,brief,redirect) {
+                var code = document.getElementById("widgetCode");
+                var output = baseCode.replace("WIDTH",width);
+                output = output.replace("HEIGHT",height);
+                output = output.replace("BRIEF",brief);
+                output = output.replace("REDIRECT",redirect);
+                output = output.replace("SCHEME",scheme);
+                code.value = output;
+            }
+            
+            function updateWidget() {
+                var width = document.getElementById("width").value;
+                var height = document.getElementById("height").value;
+                var scheme = document.getElementById("scheme").value;
+                var brief = document.getElementById("brief").checked;
+                var redirect = document.getElementById("redirect").checked;
+                
+                var iframeEl = document.getElementById("iframe");
+                iframeEl.width = width;
+                iframeEl.height = height;
+                iframeEl.src = "http://portal.incendant.com/HealthLibrary/index.html?scheme="+scheme+"&brief="+brief;
+                /*if (showBorder) {
+                    iframeEl.setAttribute('frameborder','1');
+                } else {
+                    iframeEl.setAttribute('frameborder','0');
+                }*/
+                
+                updateCode(width,height,scheme,brief,redirect);
+            }
+            
+            function init() {
+                var width = document.getElementById("width").value;
+                var height = document.getElementById("height").value;
+                var scheme = document.getElementById("scheme").value;
+                var brief = document.getElementById("brief").checked;
+                var redirect = document.getElementById("redirect").checked;
+                
+                updateCode(width,height,scheme,brief,redirect);
+            }
+            
+        </script>
+    </head>
+    <body onload="init()">
+        <h1>Incendant Widget Configutation Tool</h1>
+
+        <form action="" name="widgetform" id="tform">
+            <table width ="100%">
+                <tr><td width="30%">Width<font color="red">*</font></td>
+                    <td><input class="req" type ="text" name="width" id="width" value ="675px" maxlength="10" /></td></tr>
+                <tr><td>Height<font color="red">*</font></td>
+                    <td><input class="req" type="text" name="height" id="height" value ="440px" maxlength ="10" /></td></tr>
+                <tr><td>Color Scheme</td>
+                    <td><select name="scheme" id="scheme" width="300">
+                        <option value="app">Default</option>
+                        <option value="pmc">ParkView</option>
+                        <option value="blue">Blue</option>
+                        <option value="red">Red</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="orange">Orange</option>
+                        <option value="brown">Brown</option>
+                        <option value="gray">Gray</option>
+                    </select></td></tr>
+                <tr><td>Short Version</td>
+                    <td><input type="checkbox" name="brief" id="brief" value="true"/></td></tr>
+                <tr><td>Redirect Mobile</td>
+                    <td><input type="checkbox" name="redirect" id="redirect" value="true"/></td></tr>
+                <tr><td>
+                    <button class="button" type="button" onclick="updateWidget();" value="Submit&nbsp&nbsp"><span>Update</span></button>
+                    
+                </td>
+                    <td><button class="button" type="reset"><span>Reset Form</span></button></td></tr>
+            </table>
+            
+        </form>
+        <h1>The Widget</h1>
+        <iframe id="iframe" src="http://portal.incendant.com/HealthLibrary/index.html" width="675" height="440" brief="false" frameborder="0">
+            Your Browser must support iFrames to use this configurator.
+        </iframe>
+        <br/>
+        <h1>The Code</h1>
+        <textarea id="widgetCode" rows="2" cols="50" readonly>
+        </textarea>
+    </body>
+</html>

@@ -1,0 +1,44 @@
+[
+{
+ "id": "Header",
+ "type": "header",
+ "title": "Diabetes Self Education",
+ "summary": "This program uses brief, interactive video modules to teach you about diabetes and its management. View the modules at your leisure. At the end of each video you can email a copy to yourself or a loved one.",
+ "image": "http:\/\/portal.incendant.com/HealthLibrary/resources/images/meetdoctor.jpg",
+  "topic": { "id":"" }
+ }
+,
+    {
+        "id": "feature1",
+        "type": "tile",
+        "title": "What is Diabetes?",
+        "summary": "This brief video covers the basic causes, symptoms and treatments for Diabetes type I and II.  Some of the topics that are covered include:<ul><li>What causes Diabetes?</li><li>How will you be affected?</li><li>Long term Effects?</li><li>How will you be treated?</li></ul>",
+        "image": "http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS.png",
+        "topic": {"id":"459", "shortcode":"DBS"}
+    },
+    {
+        "id": "feature2",
+        "type": "tile",
+        "title": "Diabetes & Diet",
+        "summary": "This brief video covers the basic diet and proper eating habits for people with Diabetes.  Some of the topics that are covered include:<ul><li>Does it matter what I eat as a diabetic?</li><li>Why do I need to eat healthy?</li><li>What is a healthy diet?</li><li>Where can I get help with my diet?</li></ul>",
+        "image": "http:\/\/s3.amazonaws.com\/incendant\/DND\/DND.png",
+        "topic": {"id":"460", "shortcode":"DND" }
+    },
+    {
+        "id": "feature3",
+        "type": "tile",
+        "title": "Understanding Hypoglycemia",
+        "summary": "This brief video covers the basic causes, symptoms and treatments for Hypoglycemia.  Some of the topics that are covered include:<ul><li>What Causes Hypoglycemia?</li><li>How Will You Be Affected?</li><li>How will you be treated?</li><li>What do you need to do?</li></ul>",
+        "image": "http:\/\/s3.amazonaws.com\/incendant\/HPO\/HPO.png",
+        "topic": {"id":"175", "shortcode":"HPO"}
+    },
+    {
+        "id": "feature4",
+        "type": "tile",
+        "title": "Hyperglycemia",
+        "summary": "This brief video covers the basic causes, symptoms and treatmens for Hyperglycemia.  Some of the topics that are covered include:<ul><li>What Causes Hyperglycemia?</li><li>How Will You Be Affected?</li><li>How will you be treated?</li><li>What do you need to do?</li></ul>",
+        "image": "http:\/\/s3.amazonaws.com\/incendant\/HPE\/HPE.png",
+        "topic": {"id":"176", "shortcode":"HPE"}
+    }
+]
+
