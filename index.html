@@ -11,7 +11,7 @@
     <script src="http://portal.incendant.com/HealthLibrary/js/incendantUtils.js"></script>
 	<link rel="stylesheet" href="css/incendant.css" />
     <script type="text/javascript">
-    
+    //alert("test");
     var videos = {};
     var videosById = [];
     var videosByShortcode = [];
@@ -20,6 +20,7 @@
     var imagesById = [];
     var imageCategoriesById = [];
     var featured = {};
+    var sortedVideos = [];
     
     //These variables are for the image filters
     var showNormal = true;
@@ -154,8 +155,8 @@
     function populateSearch() {
     	var searchList = $('#search-listview');
     	
-	    for (var index in videosById) {
-	    	var topic = videosById[index];
+	    for (var index in sortedVideos) {
+	    	var topic = sortedVideos[index];
 	    	
 	    	searchList.append('<li vidid='+topic.id+'>'+
     								'<img src="'+topic.new_thumb+'"></img>'+
@@ -209,6 +210,7 @@
     		//sort the videos
     		cat.topics = cat.topics.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
     	}
+    	sortedVideos = videosById.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
     }
     function loadImages() {
     	images = getImages();

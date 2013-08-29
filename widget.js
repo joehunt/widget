@@ -1,4 +1,4 @@
-var INCENDANT_WIDGET_BASE = "http://portal.incendant.com/HealthLibrary/new/";
+var INCENDANT_WIDGET_BASE = "http://portal.incendant.com/HealthLibrary/";
 
 var oReq = new XMLHttpRequest();
 oReq.open("get", INCENDANT_WIDGET_BASE+"validWidgetDomain.php?domain="+document.location.host, false);
