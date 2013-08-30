@@ -1,3 +1,12 @@
+var incendant_lid = "DEFAULT";
+var titleString = "Health Library";
+var useBriefVideo = true;
+var INCENDANT_OFFLINE = false;
+
+if (window.location.origin == "file://" || window.location.hostname == "localhost") {
+	//We are local
+	INCENDANT_OFFLINE = true;
+}
 
 var setupPCScrollbar = function(container){
     var isMobile = (navigator.appVersion.toLowerCase().indexOf("mobile") > -1 || navigator.appVersion.toLowerCase().indexOf("ipad") > -1);
@@ -15,11 +24,11 @@ var setupPCScrollbar = function(container){
     }
 }
 
-var incendant_lid = "96a05786-c449-4245-95e9-fe6c3c720cc5";
-var titleString = "Health Library";
-var useBriefVideo = true;
-//var BASE_URL = "../";
-var BASE_URL = "http://portal.incendant.com/HealthLibrary/index.php";
+if (INCENDANT_OFFLINE) {
+	var BASE_URL = "http://portal.incendant.com/HealthLibrary/index.php";
+} else {
+	//var BASE_URL = "../";
+}
 
 var QueryString = function () {
   // This function is anonymous, is executed immediately and 

@@ -43,9 +43,11 @@
         	$("#search-listview").listview('option', 'filterCallback', searchFilter);
 			
         } else if (event.target.id == 'video-view') {
-        	$('a[data-rel="back"]').live('click', function() {
-        		jwplayer('demovideo').stop();
-        	});
+        	if (!INCENDANT_OFFLINE) {
+        		$('a[data-rel="back"]').live('click', function() {
+        			jwplayer('demovideo').stop();
+        		});
+        	}
         }
     });   
     $(document).ready(function(){
@@ -299,72 +301,84 @@
     
     
     function setupJWPlayer(imageViewDiv, video) {
-    	//console.log(video);
-        var shortcode = video.shortcode;
-        var enSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_en.srt';
-        var esSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_es.srt';
-        var divid = 'demovideo';
-        //var divid = 'demovideo_'+Math.random;
-        imageViewDiv.html('<div id="'+divid+'">Loading the player ...</div>');
-        var image_file_url = video.thumb;
-        var videoLink = video.video;
-        
-        var signedUrl = video.file;
-        var streamer = 'rtmp://'+video.streamer;
-
-        //console.log("signedUrl variable:"+signedUrl);
-        //console.log("videoLink variable:"+videoLink);
-          // console.log("Loading video for "+shortcode);
-//        var width = imageViewDiv.offset().width;
-//        var height = imageViewDiv.offset().height;
-        var width = $(window).width()-30;
-        var height = $(window).height()-72; //header + margins
-
-           //Do we need to handle shortened videos?
-        if (useBriefVideo && typeof video.brief !== 'undefined') {
-           signedUrl = video.brief;
-           videoLink = "https://s3.amazonaws.com/incendant/short/"+shortcode+"_C.mp4";
-           jwplayer(divid).setup({
-                width: width,
-                height: height,
-                image: image_file_url,
-                autostart : 'true',
-                primary: 'flash',
-                sources: [{
-                          file: streamer+"mp4:"+signedUrl
-                          },{
-                    file: videoLink
-                }]
-            });
-       } else {
- 
-        jwplayer(divid).setup({
-            width: width,
-            height: height,
-            image: image_file_url,
-            autostart : 'true',
-            primary: 'flash',
-            tracks: [{ 
-                file: enSub, 
-                label: "English",
-                kind: "captions"
-            },{ 
-                file: esSub, 
-                kind: "captions",
-                label: "Spanish"
-            }],
-            sources: [{ 
-                file: streamer+"mp4:"+signedUrl
-            },{
-                file: videoLink
-            }]
-        });
-        }
-
-        this.onJWPlayerReady();
-        jwplayer(divid).onError(onVideoError);
-        jwplayer(divid).onComplete(onVideoComplete);
-
+    	var shortcode = video.shortcode;
+    	var enSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_en.srt';
+	    var esSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_es.srt';
+	        
+    	if (INCENDANT_OFFLINE) {
+    		//var base = 'resources/video/'+shortcode;
+        	var videoPlayerHtml = '<video width="100%" poster="'+video.thumb+'" autoplay="true" controls="true" src="'+video.video+'">';
+        	if (!useBriefVideo) {
+            	videoPlayerHtml += '<track src="'+enSub+'" kind="captions" srclang="en" label="English" />';
+                        //'<track src="'+base+'_es.srt" kind="subtitles" srclang="es" label="Spanish" />';
+            }
+            videoPlayerHtml += 'Your browser does not support the video tag.'+
+                        '</video>';
+			imageViewDiv.html(videoPlayerHtml);
+    	} else {
+	    	//console.log(video);
+	        var divid = 'demovideo';
+	        //var divid = 'demovideo_'+Math.random;
+	        imageViewDiv.html('<div id="'+divid+'">Loading the player ...</div>');
+	        var image_file_url = video.thumb;
+	        var videoLink = video.video;
+	        
+	        var signedUrl = video.file;
+	        var streamer = 'rtmp://'+video.streamer;
+	
+	        //console.log("signedUrl variable:"+signedUrl);
+	        //console.log("videoLink variable:"+videoLink);
+	        // console.log("Loading video for "+shortcode);
+	//      var width = imageViewDiv.offset().width;
+	//      var height = imageViewDiv.offset().height;
+	        var width = $(window).width()-30;
+	        var height = $(window).height()-72; //header + margins
+	
+	           //Do we need to handle shortened videos?
+	        if (useBriefVideo && typeof video.brief !== 'undefined') {
+	           signedUrl = video.brief;
+	           videoLink = "https://s3.amazonaws.com/incendant/short/"+shortcode+"_C.mp4";
+	           jwplayer(divid).setup({
+	                width: width,
+	                height: height,
+	                image: image_file_url,
+	                autostart : 'true',
+	                primary: 'flash',
+	                sources: [{
+	                          file: streamer+"mp4:"+signedUrl
+	                          },{
+	                    file: videoLink
+	                }]
+	            });
+	       } else {
+	 
+	        jwplayer(divid).setup({
+	            width: width,
+	            height: height,
+	            image: image_file_url,
+	            autostart : 'true',
+	            primary: 'flash',
+	            tracks: [{ 
+	                file: enSub, 
+	                label: "English",
+	                kind: "captions"
+	            },{ 
+	                file: esSub, 
+	                kind: "captions",
+	                label: "Spanish"
+	            }],
+	            sources: [{ 
+	                file: streamer+"mp4:"+signedUrl
+	            },{
+	                file: videoLink
+	            }]
+	        });
+	        }
+	
+	        this.onJWPlayerReady();
+	        jwplayer(divid).onError(onVideoError);
+	        jwplayer(divid).onComplete(onVideoComplete);
+		}
     }
            
     function onVideoError(message) {
