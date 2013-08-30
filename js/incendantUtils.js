@@ -18,7 +18,8 @@ var setupPCScrollbar = function(container){
 var incendant_lid = "96a05786-c449-4245-95e9-fe6c3c720cc5";
 var titleString = "Health Library";
 var useBriefVideo = true;
-
+//var BASE_URL = "../";
+var BASE_URL = "http://portal.incendant.com/HealthLibrary/index.php";
 
 var QueryString = function () {
   // This function is anonymous, is executed immediately and 
@@ -84,7 +85,7 @@ var registerIncendantVisit = function() {
     var visit_id = null;
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "../index.php?option=com_articlevideo&task=visitRegistration&lid="+getIncendantLid(), false);
+	oReq.open("get", BASE_URL+"?option=com_articlevideo&task=visitRegistration&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
@@ -104,7 +105,7 @@ var addIncendantVideoVisit = function(articleId) {
     var visit_id = getIncendantVisitId();
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "../index.php?option=com_articlevideo&task=visitupdate.update"+
+	oReq.open("get", BASE_URL+"?option=com_articlevideo&task=visitupdate.update"+
               "&visitId="+visit_id+
               "&articleId="+articleId+
               "&lid="+getIncendantLid(), false);
@@ -130,7 +131,7 @@ var updatePatientInfo = function(email) {
     var visit_id = getIncendantVisitId();
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "../?option=com_users&task=registration.savePatient"+
+	oReq.open("get", BASE_URL+"?option=com_users&task=registration.savePatient"+
               "&name="+encodeURIComponent(email)+
               "&email="+encodeURIComponent(email)+
               "&sendEmail=1"+
@@ -157,7 +158,7 @@ var getVideos = function() {
     var videos = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", "../index.php?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", BASE_URL+"?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
@@ -176,7 +177,7 @@ var getImages = function() {
     var images = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", "../index.php?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", BASE_URL+"?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {

@@ -1,0 +1,22 @@
+{
+  "main": "index.html",
+  "name": "Incendant",
+  "description": "Incendant Patient Education Suite",
+  "version": "0.1.0",
+  "keywords": [ "Incendant", "Patient Education" ],
+  "window": {
+    "icon": "resources/icons/icon.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 680,
+    "height": 440,
+    "position": "mouse",
+    "min_width": 400,
+    "min_height": 200,
+    "max_width": 1920,
+    "max_height": 1080
+  },
+  "webkit": {
+    "plugin": true
+  }
+}
