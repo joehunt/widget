@@ -115,7 +115,7 @@
 	    oReq.open("get", "featured.json", false);
 		oReq.send();
 	
-		if (oReq.status === 200 && oReq.responseText) {
+		if (oReq.responseText) {
 	    	//Success
 	    	featured = JSON.parse(oReq.responseText);
 	    } else {
