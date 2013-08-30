@@ -2,13 +2,15 @@
 <html> 
 <head> 
 	<title>360&deg; Engage by Incendant</title> 
+	<meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.css" />
 	<link rel="stylesheet" href="themes/pmc.min.css" />
-	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-    <script src="http://incendant.com/jwplayer/jwplayer.js" id="jwplayer_script"></script>
+	<script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
+	<script src="https://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
+	<script src="jwplayer/jwplayer.js" id="jwplayer_script"></script>
     <script type="text/javascript">jwplayer.key="qRu5Fl/V8xAT8KDeQ2YTL+d/sUcZlaxBzGUJNiAxc40=";</script>
-    <script src="http://portal.incendant.com/HealthLibrary/js/incendantUtils.js"></script>
+    <script src="js/incendantUtils.js"></script>
 	<link rel="stylesheet" href="css/incendant.css" />
     <script type="text/javascript">
     //alert("test");
@@ -33,12 +35,17 @@
             defaultPageTransition: 'slide',
         });
        // $.mobile.listview.prototype.options.filterCallback = searchFilter2;
+        
     });
  	$(document).bind('pageinit', function (event) {
- 		console.log(event);
+ 		//console.log(event);
         if (event.target.id == 'search') {
         	$("#search-listview").listview('option', 'filterCallback', searchFilter);
 			
+        } else if (event.target.id == 'video-view') {
+        	$('a[data-rel="back"]').live('click', function() {
+        		jwplayer('demovideo').stop();
+        	});
         }
     });   
     $(document).ready(function(){
@@ -136,14 +143,19 @@
 	    								'<img src="'+topic.image+'"></img>'+
 	    								'<h1>'+topic.title+'</h1>'+
 	    								'<p>'+topic.summary+'</p>'+
-	    								'<div class="watch_featured_video" data-role="button" vidid="'+topic.topic.id+'">Watch Video</div>'+
-	    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" data-role="button" target="_blank"">Download PDF</a>'+
+//	    								'<div class="watch_featured_video" data-role="button" vidid="'+topic.topic.id+'">Watch Video</div>'+
+	//    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" data-role="button" target="_blank"">Download PDF</a>'+
+	    								'<a class="watch_featured_video" vidid="'+topic.topic.id+'">Watch Video</a>'+
+	    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" target="_blank"">Download PDF</a>'+
 	    							'</div>'+
 	    						'</div>'
 	    		);
 		    }
 	    	
 	    }
+	    $(".watch_featured_video",'#featured').button();
+	    $(".download_pdf",'#featured').button();
+	    
 	    $( ".watch_featured_video", '#featured' ).click(function(evt) {
         	console.log("Show Featured Video ",evt.currentTarget);
         	var catid = evt.currentTarget.getAttribute("vidid");
@@ -190,6 +202,7 @@
     	var videoCats = $('#videos div[data-role=content]').append($(document.createElement('div')).attr("catid","video-cats"));
     	for (var index in videos) {
     		var cat = videos[index];
+    		cat.thumb_url = replaceProtocol(cat.thumb_url);
     		videoCategoriesById[cat.id] = cat;
     		//console.log(cat);
     		var tile = $(document.createElement('div')).addClass("incendant_tile");
@@ -202,7 +215,10 @@
     			var vid = cat.topics[j];
     			//remove (ER) from titles
 	    		vid.title = vid.title.replace(/ \(ER\)/g,"");
-	    		console.log(vid.title);
+				vid.thumb = replaceProtocol(vid.thumb);
+				vid.new_thumb = replaceProtocol(vid.new_thumb);
+				vid.video = replaceProtocol(vid.video);
+   	    		//console.log(vid.title);
 	    		videosById[vid.id] = vid;
     			videosByShortcode[vid.shortcode] = vid;
     		}
@@ -210,7 +226,7 @@
     		//sort the videos
     		cat.topics = cat.topics.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
     	}
-    	sortedVideos = videosById.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
+    	sortedVideos = videosById.slice(0).sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
     }
     function loadImages() {
     	images = getImages();
@@ -222,6 +238,7 @@
     	var imageCats = $('#images div[data-role=content]').append($(document.createElement('div')).attr("catid","image-cats"));
     	for (var index in images) {
     		var cat = images[index];
+    		cat.thumb = replaceProtocol(cat.thumb);
     		imageCategoriesById[cat.id] = cat;
     		//console.log(cat);
     		var tile = $(document.createElement('div')).addClass("incendant_tile");
@@ -232,6 +249,8 @@
     		//loop through the images and add them to the global lookup
     		for (var j in cat.images) {
     			var image = cat.images[j];
+    			image.thumb = replaceProtocol(image.thumb);
+    			image.source = replaceProtocol(image.source);
     			imagesById[image.id] = image;
     		}
     	}
@@ -282,8 +301,8 @@
     function setupJWPlayer(imageViewDiv, video) {
     	//console.log(video);
         var shortcode = video.shortcode;
-        var enSub = 'http://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_en.srt';
-        var esSub = 'http://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_es.srt';
+        var enSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_en.srt';
+        var esSub = 'https://s3.amazonaws.com/incendant/'+shortcode+'/'+shortcode+'_es.srt';
         var divid = 'demovideo';
         //var divid = 'demovideo_'+Math.random;
         imageViewDiv.html('<div id="'+divid+'">Loading the player ...</div>');
@@ -304,7 +323,7 @@
            //Do we need to handle shortened videos?
         if (useBriefVideo && typeof video.brief !== 'undefined') {
            signedUrl = video.brief;
-           videoLink = "http://s3.amazonaws.com/incendant/short/"+shortcode+"_C.mp4";
+           videoLink = "https://s3.amazonaws.com/incendant/short/"+shortcode+"_C.mp4";
            jwplayer(divid).setup({
                 width: width,
                 height: height,
@@ -373,12 +392,13 @@
         //addIncendantVideoVisit(this.config.topic.id);
     }
 
-    
+    function replaceProtocol(str) {
+    	return str.replace(/http:/gi,'https:');
+    }
     
     
     </script>
 
-	<script src="http://code.jquery.com/mobile/1.2.1/jquery.mobile-1.2.1.min.js"></script>
 </head> 
 <body> 
 

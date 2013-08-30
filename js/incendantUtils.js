@@ -84,7 +84,7 @@ var registerIncendantVisit = function() {
     var visit_id = null;
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "http://portal.incendant.com/index.php?option=com_articlevideo&task=visitRegistration&lid="+getIncendantLid(), false);
+	oReq.open("get", "../index.php?option=com_articlevideo&task=visitRegistration&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
@@ -104,7 +104,7 @@ var addIncendantVideoVisit = function(articleId) {
     var visit_id = getIncendantVisitId();
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "http://portal.incendant.com/index.php?option=com_articlevideo&task=visitupdate.update"+
+	oReq.open("get", "../index.php?option=com_articlevideo&task=visitupdate.update"+
               "&visitId="+visit_id+
               "&articleId="+articleId+
               "&lid="+getIncendantLid(), false);
@@ -130,7 +130,7 @@ var updatePatientInfo = function(email) {
     var visit_id = getIncendantVisitId();
     //Register the visit with sync call to server
     var oReq = new XMLHttpRequest();
-	oReq.open("get", "http://portal.incendant.com/?option=com_users&task=registration.savePatient"+
+	oReq.open("get", "../?option=com_users&task=registration.savePatient"+
               "&name="+encodeURIComponent(email)+
               "&email="+encodeURIComponent(email)+
               "&sendEmail=1"+
@@ -157,7 +157,7 @@ var getVideos = function() {
     var videos = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", "http://portal.incendant.com/index.php?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", "../index.php?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
@@ -176,7 +176,7 @@ var getImages = function() {
     var images = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", "http://portal.incendant.com/index.php?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", "../index.php?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid(), false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
