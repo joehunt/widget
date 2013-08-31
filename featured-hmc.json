@@ -1,0 +1,57 @@
+[
+  {
+ "id": "HOME",
+ "type": "header",
+ "title": "Patient Education Resources",
+ "summary": "These brief, interactive videos cover important topics that patients must understand to have the best care experience.  At the end of each video you can e-mail a copy to the patient, a caregiver or a loved one.",
+ "image": "themes/images/meetdoctor.jpg",
+ "topic": {
+ "id":"",
+ "title":"",
+ "shortcode":"",
+ "streamer":"",
+ "file":"",
+ "thumb":"",
+ "video":"",
+ "caption":[]
+ }
+ }
+ ,
+ {
+ "id": "HMC",
+ "type": "tile",
+ "title": "Welcome to Home Care",
+ "summary":"<ul><li>What is Homecare?</li><li>Why might you need home care?</li><li>How is home care done?</li><li>What do you need to do?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/HMC\/HMC.png",
+ "topic": {"id":"313",
+ "title":"HMC",
+ "shortcode":"HMC",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/HMC\/HMC.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/HMC\/HMC.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/HMC\/HMC_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/HMC\/HMC_es.srt"}]
+ }
+ },
+ {
+ "id": "PEN",
+ "type": "tile",
+ "title": "Participating in your Healthcare",
+ "summary": "<ul><li>Why should you participate in your healthcare?</li><li>How should you participate in your healthcare?</li><li>Who can help you participate in your healthcare?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/PEN\/PEN.png",
+ "topic": {"id":"455",
+ "title":"Patient Engagement",
+ "shortcode":"PEN",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/PEN\/PEN.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/PEN\/PEN.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/PEN\/PEN_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/PEN\/PEN_es.srt"}]
+ }
+ }
+]
+

@@ -1,0 +1,91 @@
+[
+ {
+ "id": "Header",
+ "type": "header",
+ "title": "Diabetes Education",
+ "summary": "These interactive video modules teach about diabetes and its management. At the end of each video you can email a copy to yourself or a loved one.",
+ "image": "themes/images/meetdoctor.jpg",
+ "topic": {
+ "id":"",
+ "title":"",
+ "shortcode":"",
+ "streamer":"",
+ "file":"",
+ "thumb":"",
+ "video":"",
+ "caption":[]
+ }
+ }
+ ,
+ {
+ "id": "feature1",
+ "type": "tile",
+ "title": "What is Diabetes?",
+ "summary": "<ul><li>What causes diabetes?</li><li>How will you be affected?</li><li>Long term effects?</li><li>How will you be treated?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS.png",
+ "topic": {"id":"459",
+ "title":"Diabetes",
+ "shortcode":"DBS",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/DBS\/DBS_es.srt"}]
+ }
+ },
+ {
+ "id": "feature2",
+ "type": "tile",
+ "title": "Diabetes & Diet",
+ "summary": "<ul><li>Does it matter what I eat as a diabetic?</li><li>Why do I need to eat healthy?</li><li>What is a healthy diet?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/DND\/DND.png",
+ "topic": {"id":"460",
+ "title":"Diabetes & Diet",
+ "shortcode":"DND","new_thumb":"http:\/\/s3.amazonaws.com\/incendant\/thumb\/DND.png",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/DND\/DND.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/DND\/DND.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/DND\/DND_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/DND\/DND_es.srt"}]
+ }
+ },
+ {
+ "id": "feature3",
+ "type": "tile",
+ "title": "Hypoglycemia - Low Blood Sugar",
+ "summary": "<ul><li>What causes hypoglycemia?</li><li>How will you be affected?</li><li>How will you be treated?</li><li>What do you need to do?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/HPOH\/HPOH.png",
+ "topic": {"id":"175",
+ "title":"Hypoglycemia (ER)",
+ "shortcode":"HPOH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/HPOH\/HPOH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/HPOH\/HPOH_es.srt"}]
+ }
+ },
+ {
+ "id": "feature4",
+ "type": "tile",
+ "title": "Hyperglycemia - High Blood Sugar",
+ "summary": "<ul><li>What causes hyperglycemia?</li><li>How will you be affected?</li><li>How will you be treated?</li><li>What do you need to do?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/HPEH\/HPEH.png",
+ "topic": {"id":"176",
+ "title":"Hyperglycemia",
+ "shortcode":"HPEH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/HPEH\/HPEH.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/HPEH\/HPEH.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/HPEH\/HPEH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/HPEH\/HPEH_es.srt"}]
+ }
+ }
+]
+

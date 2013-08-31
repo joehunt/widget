@@ -17,7 +17,6 @@
     var videos = {};
     var videosById = [];
     var videosByShortcode = [];
-    var videoCategoriesById = [];
     var images = {};
     var imagesById = [];
     var imageCategoriesById = [];
@@ -55,9 +54,12 @@
     $(document).ready(function(){
         //alert("Ready Page Initialized");
     	setupIncendantLid();
-        loadFeatured();
-        loadVideos();
-        loadImages();
+        loadFeatured('featured-hmc.json','homecare');
+        loadFeatured('featured-cop.json','copd');
+        loadFeatured('featured-dbs.json','diabetes');
+        loadFeatured('featured-mi.json','chf');
+        loadVideos('procura-videos.json');
+        loadImages('procura-images.json');
         populateSearch();
         //set the header
         $("div[data-role=header] h1").html(getIncendantTitleString());
@@ -113,10 +115,10 @@
 			}
 		});
 	});
-    function loadFeatured() {
+    function loadFeatured(file,id) {
     	//Get the Videos as JSON
 	    var oReq = new XMLHttpRequest();
-	    oReq.open("get", "featured.json", false);
+	    oReq.open("get", file, false);
 		oReq.send();
 	
 		if (oReq.responseText) {
@@ -126,7 +128,7 @@
 	        //could not register visit
 	        console.log("Could not retrieve featured content from the server!");
 	    }
-		var featuredDiv = $('#featured div[data-role=content]').append($(document.createElement('div')).addClass("featured"));
+		var featuredDiv = $('#'+id+' div[data-role=content]').append($(document.createElement('div')).addClass("featured"));
     	
 	    for (var index in featured) {
 	    	var topic = featured[index];
@@ -149,16 +151,16 @@
 	    								'<p>'+topic.summary+'</p>'+
 //	    								'<div class="watch_featured_video" data-role="button" vidid="'+topic.topic.id+'">Watch Video</div>'+
 	//    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" data-role="button" target="_blank"">Download PDF</a>'+
-	    								'<a class="watch_featured_video" vidid="'+topic.topic.id+'">Watch Video</a>'+
-	    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" target="_blank"">Download PDF</a>'+
+	    								'<div style="clear:both"><a class="watch_featured_video" vidid="'+topic.topic.id+'">Watch Video</a>'+
+	    								'<a class="download_pdf" href="http://s3.amazonaws.com/incendant/pdf/'+topic.topic.shortcode+'.pdf" target="_blank"">Download PDF</a></div>'+
 	    							'</div>'+
 	    						'</div>'
 	    		);
 		    }
 	    	
 	    }
-	    $(".watch_featured_video",'#featured').button();
-	    $(".download_pdf",'#featured').button();
+	    $(".watch_featured_video").button();
+	    $(".download_pdf").button();
 	    
 	    $( ".watch_featured_video", '#featured' ).click(function(evt) {
         	console.log("Show Featured Video ",evt.currentTarget);
@@ -168,6 +170,58 @@
         	}
 		});
 
+    }
+    function loadVideos(file) {
+    	videos = getVideos(file);
+
+    	//sort the categories
+    	videos = videos.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
+
+    	for (var index in videos) {
+    		var cat = videos[index];
+    		cat.thumb_url = replaceProtocol(cat.thumb_url);
+    		
+    		//loop through the videos and add them to the global lookup
+    		for (var j in cat.topics) {
+    			var vid = cat.topics[j];
+    			//remove (ER) from titles
+	    		vid.title = vid.title.replace(/ \(ER\)/g,"");
+				vid.thumb = replaceProtocol(vid.thumb);
+				vid.new_thumb = replaceProtocol(vid.new_thumb);
+				vid.video = replaceProtocol(vid.video);
+   	    		//console.log(vid.title);
+	    		videosById[vid.id] = vid;
+    			videosByShortcode[vid.shortcode] = vid;
+    		}   		
+    	}
+    	sortedVideos = videosById.slice(0).sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
+    }
+    function loadImages(file) {
+    	images = getImages(file);
+
+    	//sort the categories
+    	images = images.sort(function (a,b) {return a.name < b.name ? -1 : a.name > b.name;});
+    	//console.log(images);
+
+    	var imageCats = $('#images div[data-role=content]').append($(document.createElement('div')).attr("catid","image-cats"));
+    	for (var index in images) {
+    		var cat = images[index];
+    		cat.thumb = replaceProtocol(cat.thumb);
+    		imageCategoriesById[cat.id] = cat;
+    		//console.log(cat);
+    		var tile = $(document.createElement('div')).addClass("incendant_tile");
+    		tile.attr("catid",cat.id);
+    		tile.html("<img src='"+cat.thumb+"' alt='"+cat.title+"'></img>");
+    		imageCats.append(tile);
+    		
+    		//loop through the images and add them to the global lookup
+    		for (var j in cat.images) {
+    			var image = cat.images[j];
+    			image.thumb = replaceProtocol(image.thumb);
+    			image.source = replaceProtocol(image.source);
+    			imagesById[image.id] = image;
+    		}
+    	}
     }
     function populateSearch() {
     	var searchList = $('#search-listview');
@@ -199,102 +253,6 @@
 		return text.toLowerCase().indexOf( searchValue ) === -1;
 	}
 
-    function loadVideos() {
-    	videos = getVideos();
-
-    	//sort the categories
-    	videos = videos.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
-
-    	var videoCats = $('#videos div[data-role=content]').append($(document.createElement('div')).attr("catid","video-cats"));
-    	for (var index in videos) {
-    		var cat = videos[index];
-    		cat.thumb_url = replaceProtocol(cat.thumb_url);
-    		videoCategoriesById[cat.id] = cat;
-    		//console.log(cat);
-    		var tile = $(document.createElement('div')).addClass("incendant_tile");
-    		tile.attr("catid",cat.id);
-    		tile.html("<img src='"+cat.thumb_url+"' alt='"+cat.title+"'></img>");
-    		videoCats.append(tile);
-    		
-    		//loop through the videos and add them to the global lookup
-    		for (var j in cat.topics) {
-    			var vid = cat.topics[j];
-    			//remove (ER) from titles
-	    		vid.title = vid.title.replace(/ \(ER\)/g,"");
-				vid.thumb = replaceProtocol(vid.thumb);
-				vid.new_thumb = replaceProtocol(vid.new_thumb);
-				vid.video = replaceProtocol(vid.video);
-   	    		//console.log(vid.title);
-	    		videosById[vid.id] = vid;
-    			videosByShortcode[vid.shortcode] = vid;
-    		}
-    		
-    		//sort the videos
-    		cat.topics = cat.topics.sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
-    	}
-    	sortedVideos = videosById.slice(0).sort(function (a,b) {return a.title < b.title ? -1 : a.title > b.title;});
-    }
-    function loadImages() {
-    	images = getImages();
-
-    	//sort the categories
-    	images = images.sort(function (a,b) {return a.name < b.name ? -1 : a.name > b.name;});
-    	//console.log(images);
-
-    	var imageCats = $('#images div[data-role=content]').append($(document.createElement('div')).attr("catid","image-cats"));
-    	for (var index in images) {
-    		var cat = images[index];
-    		cat.thumb = replaceProtocol(cat.thumb);
-    		imageCategoriesById[cat.id] = cat;
-    		//console.log(cat);
-    		var tile = $(document.createElement('div')).addClass("incendant_tile");
-    		tile.attr("catid",cat.id);
-    		tile.html("<img src='"+cat.thumb+"' alt='"+cat.title+"'></img>");
-    		imageCats.append(tile);
-    		
-    		//loop through the images and add them to the global lookup
-    		for (var j in cat.images) {
-    			var image = cat.images[j];
-    			image.thumb = replaceProtocol(image.thumb);
-    			image.source = replaceProtocol(image.source);
-    			imagesById[image.id] = image;
-    		}
-    	}
-    }
-    function populateVideoList(cat) {
-    	//console.log(cat);
-    	var videoList = $('#video-list div[data-role=content]').empty();
-    	
-    	for (var index in cat.topics) {
-    		var video = cat.topics[index];
-    		var tile = $(document.createElement('div')).addClass("incendant_list").attr("vidid",video.id);
-    		tile.html("<img src='"+video.new_thumb+"' alt='"+video.title+"'></img><span>"+video.title+"</span>");  
-    		videoList.append(tile);  		
-    	}
-    }
-    function populateImageList(cat) {
-    	//console.log(cat);
-    	var imageList = $('#image-list div[data-role=content]');
-    	imageList.empty();
-    	for (var index in cat.images) {
-    		var image = cat.images[index];
-    		//console.log(image);
-    		var tile = $(document.createElement('div')).addClass("incendant_tile").attr("imageid",image.id).attr("type",image.type);
-    		if (image.type=="Normal" && !showNormal ||
-    			image.type=="Pathology" && !showPathology ||
-    			image.type=="Radiology" && !showRadiology) {
-    			tile.hide();
-    		}
-    		tile.html("<img src='"+image.thumb+"' alt='"+image.name+"'></img>");  
-    		imageList.append(tile);  		
-    	}
-    }
-    function showImage(image) {
-    	//console.log(cat);
-    	var imageView = $('#image-view div[data-role=content]').empty();
-    	//console.log(imageView[0].getBoundingClientRect());
-    	imageView.html("<img width='100%' src='"+image.source+"' alt='"+image.name+"'></img>");	
-    }
     function showVideo(video) {
     	//console.log(cat);
     	if (typeof video === 'undefined') {
@@ -426,7 +384,7 @@
 </head> 
 <body> 
 
-<div data-role="page" id="featured">
+<div data-role="page" id="homecare">
 
 	<div data-role="header">
 		<h1>Videos For the Health of It</h1>
@@ -438,9 +396,80 @@
 <div data-role="footer" data-position="fixed" data-id="incendant">
   <div data-role="navbar">
 	<ul>
-		<li><a href="#featured" data-iconpos="top" data-icon="home" class="ui-btn-active ui-state-persist">Featured</a></li>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home" class="ui-btn-active ui-state-persist">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="diabetes">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs" class="ui-btn-active ui-state-persist">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="copd">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop" class="ui-btn-active ui-state-persist">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+	</ul>
+  </div><!-- /navbar -->
+</div>
+</div><!-- /page -->
+
+<div data-role="page" id="chf">
+
+	<div data-role="header">
+		<h1>Videos For the Health of It</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed" data-id="incendant">
+  <div data-role="navbar">
+	<ul>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf" class="ui-btn-active ui-state-persist">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
-		<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
 		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
 	</ul>
   </div><!-- /navbar -->
@@ -459,30 +488,11 @@
 <div data-role="footer" data-position="fixed" data-id="incendant">
   <div data-role="navbar">
 	<ul>
-		<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="camera" class="ui-btn-active ui-state-persist">Images</a></li>
-		<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
-	</ul>
-  </div><!-- /navbar -->
-</div>
-</div><!-- /page -->
-
-<div data-role="page" id="videos">
-
-	<div data-role="header">
-		<h1>Videos For the Health of It</h1>
-	</div><!-- /header -->
-
-	<div data-role="content">	
-	</div><!-- /content -->
-
-<div data-role="footer" data-position="fixed" data-id="incendant">
-  <div data-role="navbar">
-	<ul>
-		<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
-		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
-		<li><a href="#videos" data-iconpos="top" data-icon="film" class="ui-btn-active ui-state-persist">Videos</a></li>
 		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
 	</ul>
   </div><!-- /navbar -->
@@ -503,27 +513,15 @@
 	<div data-role="footer" data-position="fixed" data-id="incendant">
 	  <div data-role="navbar">
 		<ul>
-			<li><a href="#featured" data-iconpos="top" data-icon="home">Featured</a></li>
-			<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
-			<li><a href="#videos" data-iconpos="top" data-icon="film">Videos</a></li>
-			<li><a href="#search" data-iconpos="top" data-icon="search" class="ui-btn-active ui-state-persist">Search</a></li>
+		<li><a href="#homecare" data-iconpos="top" data-icon="home">Homecare</a></li>
+		<li><a href="#diabetes" data-iconpos="top" data-icon="dbs">Diabetes</a></li>
+		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
+		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
+		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
+		<li><a href="#search" data-iconpos="top" data-icon="search"  class="ui-btn-active ui-state-persist">Search</a></li>
 		</ul>
 	  </div><!-- /navbar -->
 	</div>
-</div><!-- /page -->
-
-
-<div data-role="page" id="video-list" data-add-back-btn="true">
-
-	<div data-role="header">
-		<h1>Videos For the Health of It</h1>
-	</div><!-- /header -->
-
-	<div data-role="content">	
-	</div><!-- /content -->
-
-<div data-role="footer" data-position="fixed" data-id="incendant">
-</div>
 </div><!-- /page -->
 
 <div data-role="page" id="image-list" data-add-back-btn="true">

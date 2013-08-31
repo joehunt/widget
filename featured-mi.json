@@ -1,0 +1,93 @@
+[
+  {
+ "id": "Header2",
+ "type": "header",
+ "title": "Heart Education: Congestive Heart Failure (CHF) Education",
+ "summary": "These brief, interactive videos teach about Congestive Heart Failure (CHF) and treatments for it.  At the end of each video you can e-mail a copy to yourself or a loved one",
+ "image": "themes/images/meetdoctor.jpg",
+ "topic": {
+ "id":"",
+ "title":"",
+ "shortcode":"",
+ "streamer":"",
+ "file":"",
+ "thumb":"",
+ "video":"",
+ "caption":[]
+ }
+ }
+ ,
+ {
+ "id": "MI5",
+ "type": "tile",
+ "title": "Congestive Heart Failure",
+ "summary": "<ul><li>What Causes Congestive Heart Failure</li><li>How Will You Be Affected?</li><li>How Will You Be Treated?</li><li>Complications</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/CHFH\/CHFH.png",
+ "topic": {"id":"361",
+ "title":"CHF",
+ "shortcode":"CHFH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/CHFH\/CHFH.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/CHFH\/CHFH.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/CHFH\/CHFH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/CHFH\/CHFH_es.srt"}]
+ }
+ },
+ {
+ "id": "MI3",
+ "type": "tile",
+ "title": "Blood Pressure or Hypertension Medication",
+ "summary": "<ul><li>What is hypertension?</li><li>How do hypertension medicines work?</li><li>What are some of the hypertension medications?</li><li>How and why to take your medicines</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/AHTH\/AHTH.png",
+ "topic": {"id":"253",
+ "title":"Blood Pressure Medications",
+ "shortcode":"AHTH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/AHTH\/AHTH.png","video":"http:\/\/s3.amazonaws.com\/incendant\/AHTH\/AHTH.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/AHTH\/AHTH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/AHTH\/AHTH_es.srt"}]
+ }
+ },
+
+ {
+ "id": "MI6",
+ "type": "tile",
+ "title": "Diuretic Medications",
+ "summary": "<ul><li>How do Diuretic medications work?</li><li>How are Diuretic medications taken?</li><li>Are there alternatives to Diuretic medications?</li><li>Are there any dangers or side effects from Diuretic medications?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/DMD\/DMD.png",
+ "topic": {"id":"458",
+ "title":"Diuretic Medications",
+ "shortcode":"DMD",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/DMD\/DMD.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/DMD\/DMD.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/DMD\/DMD_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/DMD\/DMD_es.srt"}]
+ }
+ },
+ {
+ "id": "MI2",
+ "type": "tile",
+ "title": "Anticoagulants",
+ "summary": "<ul><li>How do Anticoagulant medications work?</li><li>How are Anticoagulant medications taken?</li><li>Are there alternatives to Anticoagulant medications?</li><li>Are there any dangers or side effects from Anticoagulant medications?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/ACG\/ACG.png",
+ "topic": {"id":"252",
+ "title":"Anticoagulant",
+ "shortcode":"ACG",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/ACG\/ACG.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/ACG\/ACG.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/ACG\/ACG_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/ACG\/ACG_es.srt"}]
+ }
+ }
+]
+

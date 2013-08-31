@@ -2,10 +2,14 @@ var incendant_lid = "DEFAULT";
 var titleString = "Health Library";
 var useBriefVideo = true;
 var INCENDANT_OFFLINE = false;
+var BASE_URL = "../";
 
 if (window.location.origin == "file://" || window.location.hostname == "localhost") {
 	//We are local
 	INCENDANT_OFFLINE = true;
+}
+if (INCENDANT_OFFLINE) {
+	var BASE_URL = "https://portal.incendant.com/HealthLibrary/index.php";
 }
 
 var setupPCScrollbar = function(container){
@@ -22,12 +26,6 @@ var setupPCScrollbar = function(container){
         for(var i=0;i<scrollBars.length;i++)
             scrollBars[i].style.zIndex = "-1";
     }
-}
-
-if (INCENDANT_OFFLINE) {
-	var BASE_URL = "http://portal.incendant.com/HealthLibrary/index.php";
-} else {
-	//var BASE_URL = "../";
 }
 
 var QueryString = function () {
@@ -163,11 +161,14 @@ var updatePatientInfo = function(email) {
 }
 
 //Returns the Images List
-var getVideos = function() {
+var getVideos = function(file) {
+	if (typeof file === 'undefined') {
+		file = BASE_URL+"?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid();
+	}
     var videos = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", BASE_URL+"?option=com_articlevideo&task=jsonresponce.topicJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", file, false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {
@@ -182,11 +183,14 @@ var getVideos = function() {
 }
 
 //Returns the Images List
-var getImages = function() {
+var getImages = function(file) {
+	if (typeof file === 'undefined') {
+		file = BASE_URL+"?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid();
+	}
     var images = null;
     //Get the Videos as JSON
     var oReq = new XMLHttpRequest();
-    oReq.open("get", BASE_URL+"?option=com_illustrations&task=imageJSON&lang=en&lid="+getIncendantLid(), false);
+    oReq.open("get", file, false);
 	oReq.send();
 
 	if (oReq.status === 200 && oReq.responseText && oReq.responseText != "DEFAULT") {

@@ -1,0 +1,92 @@
+[
+  {
+ "id": "COPD",
+ "type": "header",
+ "title": "COPD Self Education",
+ "summary": "These brief, interactive videos teach about Chronic Obstructive Pulmonary Disease (COPD) and its treatments.  At the end of each video you can e-mail a copy to yourself or a loved one.",
+ "image": "themes/images/meetdoctor.jpg",
+ "topic": {
+ "id":"",
+ "title":"",
+ "shortcode":"",
+ "streamer":"",
+ "file":"",
+ "thumb":"",
+ "video":"",
+ "caption":[]
+ }
+ }
+ ,
+ {
+ "id": "COPD1",
+ "type": "tile",
+ "title": "What is COPD?",
+ "summary":"<ul><li>What causes COPD?</li><li>How will you be affected?</li><li>Long term effects?</li><li>How will you be treated?</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/COPH\/COPH.png",
+ "topic": {"id":"325",
+ "title":"COPD",
+ "shortcode":"COPH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/COPH\/COPH.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/COPH\/COPH.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/COPH\/COPH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/COPH\/COPH_es.srt"}]
+ }
+ },
+ {
+ "id": "COPD2",
+ "type": "tile",
+ "title": "Quit Smoking",
+ "summary": "<ul><li>Consequences of Smoking</li><li>Difficulty in Quitting</li><li>Help to Quit</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/QTS\/QTS.png",
+ "topic": {"id":"259",
+ "title":"Quit Smoking",
+ "shortcode":"QTS","new_thumb":"http:\/\/s3.amazonaws.com\/incendant\/thumb\/QTS.png",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/QTS\/QTS.png",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/QTS\/QTS.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/QTS\/QTS_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/QTS\/QTS_es.srt"}]
+ }
+ },
+ {
+ "id": "COPD3",
+ "type": "tile",
+ "title": "Steroids",
+ "summary": "<ul><li>What are steroids?</li><li>How do they help?</li><li>When to use steroids</li><li>Cautions</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/STE\/STE.png",
+ "topic": {"id":"175",
+ "title":"Steroids",
+ "shortcode":"STE",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/STE\/STE.png","video":"http:\/\/s3.amazonaws.com\/incendant\/STE\/STE.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/STE\/STE_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/STE\/STE_es.srt"}]
+ }
+ },
+ {
+ "id": "COPD4",
+ "type": "tile",
+ "title": "Respiratory Inhalers",
+ "summary": "<ul><li>What are inhalers?</li><li>How do they help?</li><li>When and how to use inhalers</li></ul>",
+ "image": "http:\/\/s3.amazonaws.com\/incendant\/INHH\/INHH.png",
+ "topic": {"id":"176",
+ "title":"Inhalers",
+ "shortcode":"INHH",
+ "streamer":"s2kgioo4qra5mp.cloudfront.net\/cfx\/st\/",
+ "file":"",
+ "thumb":"http:\/\/s3.amazonaws.com\/incendant\/INHH\/INHH",
+ "video":"http:\/\/s3.amazonaws.com\/incendant\/INHH\/INHH.mp4",
+ "caption":[
+            {"lang":"en-GB","url":"http:\/\/s3.amazonaws.com\/incendant\/INHH\/INHH_en.srt"},
+            {"lang":"en-ES","url":"http:\/\/s3.amazonaws.com\/incendant\/INHH\/INHH_es.srt"}]
+ }
+ }
+]
+
