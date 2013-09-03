@@ -203,6 +203,30 @@
 	xmargin-left: -15px;
 	xtop: 0px;	}
 
+.ui-icon-dbs {
+	xwidth: 30px;
+	xheight: 30px;
+	background-image: url("../themes/images/glucometer.png");
+	background-size: 18px 18px;
+	xmargin-left: -15px;
+	xtop: 0px;	}
+
+.ui-icon-cop {
+	xwidth: 30px;
+	xheight: 30px;
+	background-image: url("../themes/images/lungs.png");
+	background-size: 18px 18px;
+	xmargin-left: -15px;
+	xtop: 0px;	}
+
+.ui-icon-chf {
+	xwidth: 30px;
+	xheight: 30px;
+	background-image: url("../themes/images/heart.png");
+	background-size: 18px 18px;
+	xmargin-left: -15px;
+	xtop: 0px;	}
+
 /* shrink and center the buttons on the bottom nav */
 .ui-navbar.ui-mini {
 	margin-left: auto;

@@ -42,7 +42,9 @@
         	$("#search-listview").listview('option', 'filterCallback', searchFilter);
 			
         } else if (event.target.id == 'video-view') {
-    		$('a[data-rel="back"]').live('click', function() {
+    		//$('a[data-rel="back"]').live('click', function() {
+    		//console.log("pageinit called with target video-view");
+    		$(document).on("pagehide", "#video-view", function() {
     			if (!INCENDANT_OFFLINE) {
     				jwplayer('demovideo').stop();
     			} else {
@@ -58,25 +60,13 @@
         loadFeatured('featured-cop.json','copd');
         loadFeatured('featured-dbs.json','diabetes');
         loadFeatured('featured-mi.json','chf');
+        addFeaturedHandlers();
         loadVideos('procura-videos.json');
         loadImages('procura-images.json');
         populateSearch();
         //set the header
-        $("div[data-role=header] h1").html(getIncendantTitleString());
+        $(".updateHeader h1").html(getIncendantTitleString());
         
-        $( ".incendant_tile", '#videos' ).click(function(evt) {
-        	//console.log("Show Video category "+evt.currentTarget.title+"("+evt.currentTarget.catid+")");
-        	var catid = evt.currentTarget.getAttribute("catid");
-        	//console.log("Show Video category ", evt.currentTarget);
-        	populateVideoList(videoCategoriesById[catid]);
-        	$.mobile.changePage("#video-list");
-        	$( ".incendant_list", '#video-list' ).click(function(evt) {
-	        	//console.log("Show Video ",evt.currentTarget);
-	        	var catid = evt.currentTarget.getAttribute("vidid");
-	        	showVideo(videosById[catid]);
-	        	$.mobile.changePage("#video-view");
-			});
-		});
         $( ".incendant_tile", '#images' ).click(function(evt) {
         	//console.log("Show Image category ",evt.currentTarget);
         	var catid = evt.currentTarget.getAttribute("catid");
@@ -115,6 +105,18 @@
 			}
 		});
 	});
+	function addFeaturedHandlers() {
+		$(".watch_featured_video").button();
+	    $(".download_pdf").button();
+	    
+	    $( ".watch_featured_video").click(function(evt) {
+        	//console.log("Show Featured Video ",evt.currentTarget);
+        	var vidid = evt.currentTarget.getAttribute("vidid");
+        	if (showVideo(videosById[vidid])) {
+        		$.mobile.changePage("#video-view");
+        	}
+		});
+	}
     function loadFeatured(file,id) {
     	//Get the Videos as JSON
 	    var oReq = new XMLHttpRequest();
@@ -159,16 +161,7 @@
 		    }
 	    	
 	    }
-	    $(".watch_featured_video").button();
-	    $(".download_pdf").button();
 	    
-	    $( ".watch_featured_video", '#featured' ).click(function(evt) {
-        	console.log("Show Featured Video ",evt.currentTarget);
-        	var vidid = evt.currentTarget.getAttribute("vidid");
-        	if (showVideo(videosById[vidid])) {
-        		$.mobile.changePage("#video-view");
-        	}
-		});
 
     }
     function loadVideos(file) {
@@ -247,11 +240,36 @@
 
     }
 	function searchFilter( text, searchValue , node) {
-		console.log("In searchFilter()",arguments);
+		//console.log("In searchFilter()",arguments);
 		var vidid = node.attr('vidid');
 		text += " "+videosById[vidid].metakey;
 		return text.toLowerCase().indexOf( searchValue ) === -1;
 	}
+
+    function populateImageList(cat) {
+    	//console.log(cat);
+    	$('#image-list div[data-role=header] h1').html(cat.name);
+    	var imageList = $('#image-list div[data-role=content]');
+    	imageList.empty();
+    	for (var index in cat.images) {
+    		var image = cat.images[index];
+    		//console.log(image);
+    		var tile = $(document.createElement('div')).addClass("incendant_tile").attr("imageid",image.id).attr("type",image.type);
+    		if (image.type=="Normal" && !showNormal ||
+    			image.type=="Pathology" && !showPathology ||
+    			image.type=="Radiology" && !showRadiology) {
+    			tile.hide();
+    		}
+    		tile.html("<img src='"+image.thumb+"' alt='"+image.name+"'></img>");  
+    		imageList.append(tile);  		
+    	}
+    }
+    function showImage(image) {
+    	//console.log(cat);
+    	var imageView = $('#image-view div[data-role=content]').empty();
+    	//console.log(imageView[0].getBoundingClientRect());
+    	imageView.html("<img width='100%' src='"+image.source+"' alt='"+image.name+"'></img>");	
+    }
 
     function showVideo(video) {
     	//console.log(cat);
@@ -260,9 +278,10 @@
     		return false;
     	}
 
-    	var imageView = $('#video-view div[data-role=content]').empty();
+    	$('#video-view div[data-role=header] h1').html(video.title);
+    	var videoView = $('#video-view div[data-role=content]').empty();
     	//console.log(imageView[0].getBoundingClientRect());
-    	setupJWPlayer(imageView,video);
+    	setupJWPlayer(videoView,video);
 
     	return true;
     }
@@ -283,6 +302,7 @@
             videoPlayerHtml += 'Your browser does not support the video tag.'+
                         '</video>';
 			imageViewDiv.html(videoPlayerHtml);
+			$("video").bind("ended", onVideoComplete);
     	} else {
 	    	//console.log(video);
 	        var divid = 'demovideo';
@@ -356,7 +376,8 @@
 
     function onVideoComplete() {
         //Record the visit!
-
+        console.log("show the popup!");
+		$.mobile.changePage( "#followup" );
         //Prompt the User to get the Name and Password
         /*Ext.Msg.prompt("Followup?", 
         "If you would like a followup email message with a link to review this video from your smartphone or home computer pleases provide your email address.",
@@ -386,7 +407,7 @@
 
 <div data-role="page" id="homecare">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -401,7 +422,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li -->
 	</ul>
   </div><!-- /navbar -->
 </div>
@@ -409,7 +430,7 @@
 
 <div data-role="page" id="diabetes">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -424,7 +445,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li -->
 	</ul>
   </div><!-- /navbar -->
 </div>
@@ -432,7 +453,7 @@
 
 <div data-role="page" id="copd">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -447,7 +468,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop" class="ui-btn-active ui-state-persist">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="search">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li -->
 	</ul>
   </div><!-- /navbar -->
 </div>
@@ -455,7 +476,7 @@
 
 <div data-role="page" id="chf">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -470,7 +491,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf" class="ui-btn-active ui-state-persist">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li -->
 	</ul>
   </div><!-- /navbar -->
 </div>
@@ -478,7 +499,7 @@
 
 <div data-role="page" id="images">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -493,7 +514,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="camera" class="ui-btn-active ui-state-persist">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search">Search</a></li -->
 	</ul>
   </div><!-- /navbar -->
 </div>
@@ -501,7 +522,7 @@
 
 <div data-role="page" id="search">
 
-	<div data-role="header">
+	<div data-role="header" class="updateHeader">
 		<h1>Videos For the Health of It</h1>
 	</div><!-- /header -->
 
@@ -518,7 +539,7 @@
 		<li><a href="#copd" data-iconpos="top" data-icon="cop">COPD</a></li>
 		<li><a href="#chf" data-iconpos="top" data-icon="chf">CHF</a></li>
 		<li><a href="#images" data-iconpos="top" data-icon="camera">Images</a></li>
-		<li><a href="#search" data-iconpos="top" data-icon="search"  class="ui-btn-active ui-state-persist">Search</a></li>
+		<!--li><a href="#search" data-iconpos="top" data-icon="search"  class="ui-btn-active ui-state-persist">Search</a></li -->
 		</ul>
 	  </div><!-- /navbar -->
 	</div>
@@ -582,9 +603,30 @@
 	<div data-role="content">	
 	</div><!-- /content -->
 
-<div data-role="footer" data-position="fixed" data-id="incendant">
-</div>
+	<div data-role="footer" data-position="fixed" data-id="incendant">
+	</div>
 </div><!-- /page -->
+
+<!-- Followup Email screen -->
+<div id="followup" data-role="page" data-add-back-btn="true">
+	<div data-role="header">
+		<h1>Followup Email?</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		If you would like to have a followup email that includes a link to review this video again.  Please enter you email address below.
+		<input id="followup-email" type="text" value="you@youremail.com"></input>
+		<a class="send-email" data-role="button" data-inline="true">Send Email</a>
+		<a class="cancel" data-role="button" data-inline="true">Cancel</a>
+									
+	</div><!-- content -->
+	<div data-role="footer" data-position="fixed" data-id="incendant">
+	</div>
+
+
+</div><!-- /page -->
+
+
 
 </body>
 </html>
